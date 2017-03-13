@@ -10,14 +10,27 @@ import Foundation
 import Contacts
 
 struct PersonContact {
-    var name: String?
+    
+    var firstName: String?
+    var lastName: String?
+    
+    var phoneType: String?
     var mobilePhone: String?
+    
+    var isImageAvailable: Bool?
+    var imageData: Data?
     
     init(contact: CNContact) {
         for phone in contact.phoneNumbers {
             if let phoneDict = phone.value(forKey: "value") as? CNPhoneNumber {
+                firstName = contact.givenName
+                lastName = contact.familyName
+                
+//                phoneType = contact.contactType
                 mobilePhone = phoneDict.stringValue
-                name = contact.givenName
+                
+                isImageAvailable = contact.imageDataAvailable
+                imageData = contact.imageData
             }
         }
     }

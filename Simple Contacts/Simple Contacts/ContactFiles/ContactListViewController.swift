@@ -14,6 +14,8 @@ class ContactListViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var contactTableView: UITableView?
     
     // Variables
+    private let contactDetailCellIdentifier = "contactDetailsTableViewCellIdentifier"
+    
     private var personsArray: [PersonContact] = []
     lazy private var contactStore: CNContactStore = {
         return CNContactStore()
@@ -34,7 +36,8 @@ class ContactListViewController: UIViewController, UITableViewDelegate, UITableV
 //        contactTableView?.isHidden = true
         contactTableView?.delegate = self
         contactTableView?.dataSource = self
-//        contactTableView?.register(UITableViewCell.self, forCellReuseIdentifier: "Identifier")
+        contactTableView?.rowHeight = 60
+        contactTableView?.register(UINib(nibName: "ContactDetailsTableViewCell", bundle: nil), forCellReuseIdentifier: contactDetailCellIdentifier)
     }
     
     private func configure() {
@@ -101,6 +104,7 @@ class ContactListViewController: UIViewController, UITableViewDelegate, UITableV
             print("error while getting contacts from store")
         }
         contactTableView?.reloadData()
+//        contactTableView?.isHidden = false
     }
     
     // MARK: - UITableViewDelegate Methods
@@ -116,9 +120,10 @@ class ContactListViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = personsArray[indexPath.row].name
-        cell.detailTextLabel?.text = personsArray[indexPath.row].mobilePhone
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: contactDetailCellIdentifier, for: indexPath) as? ContactDetailsTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.configureCell(person: personsArray[indexPath.row])
         return cell
     }
 
